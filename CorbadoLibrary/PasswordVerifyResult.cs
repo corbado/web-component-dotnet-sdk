@@ -4,7 +4,7 @@ namespace CorbadoLibrary
 {
     public abstract class PasswordVerifyResult
     {
-        public abstract string GetBody();
+        public abstract JsonObject GetBody();
     }
 
     public class PasswordVerifySuccess : PasswordVerifyResult
@@ -16,12 +16,12 @@ namespace CorbadoLibrary
             _redirectUrl = redirectUrl;
         }
 
-        public override string GetBody()
+        public override JsonObject GetBody()
         {
             return new JsonObject()
             {
                 { "redirectURL", _redirectUrl }
-            }.ToJsonString();
+            };
         }
     }
 
@@ -37,7 +37,7 @@ namespace CorbadoLibrary
             _errors = errors;
         }
 
-        public override string GetBody()
+        public override JsonObject GetBody()
         {
             return new JsonObject()
             {
@@ -53,7 +53,7 @@ namespace CorbadoLibrary
                     }
                 }
                 }
-            }.ToJsonString();
+            };
         }
     }
 }
