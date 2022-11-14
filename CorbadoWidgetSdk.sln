@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.4.33103.184
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CorbadoLibrary", "CorbadoLibrary\CorbadoLibrary.csproj", "{759A766C-8CE5-4F07-A4C0-E9C2446D1BE9}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{759A766C-8CE5-4F07-A4C0-E9C2446D1BE9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{759A766C-8CE5-4F07-A4C0-E9C2446D1BE9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{759A766C-8CE5-4F07-A4C0-E9C2446D1BE9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{759A766C-8CE5-4F07-A4C0-E9C2446D1BE9}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {C15AE92E-0D78-4643-8F9C-033F6F52DBA0}
+	EndGlobalSection
+EndGlobal
