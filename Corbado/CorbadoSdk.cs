@@ -1,9 +1,7 @@
 ﻿using System.Text;
-using System.Text.Json;
-using System.Text.Json.Nodes;
 
 
-namespace CorbadoLibrary
+namespace Corbado
 {
     public class CorbadoSdk
     {

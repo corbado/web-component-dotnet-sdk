@@ -1,9 +1,10 @@
-﻿using System.Text;
-using System.Text.Json;
-using System.Text.Json.Nodes;
+﻿using Newtonsoft.Json.Linq;
+using System;
+using System.Net.Http;
+using System.Text;
+using System.Threading.Tasks;
 
-
-namespace CorbadoLibrary
+namespace CorbadoWidgetBackend
 {
     public class CorbadoSdk
     {
@@ -32,30 +33,30 @@ namespace CorbadoLibrary
         /// in the form of an UserAuthMethods object</param>
         /// <returns>The json response body for the getLoginInfo response</returns>
         /// <exception cref="JsonException">Is thrown if an error occurs during parsing of the request body</exception>
-        public JsonObject GetLoginInfo(string body, Func<string, UserAuthMethods> getAuthMethodsForUser)
+        public JObject GetLoginInfo(string body, Func<string, UserAuthMethods> getAuthMethodsForUser)
         {
             //get username from body
             var bodyParsed = JsonHelper.ParseJSONObject(body);
             var username = JsonHelper.GetJsonNode(bodyParsed, "username");
 
             //Get authentication methods for user
-            UserAuthMethods authMethods = getAuthMethodsForUser(username.GetValue<String>());
+            UserAuthMethods authMethods = getAuthMethodsForUser(username.Value<String>());
 
-            JsonObject data = new JsonObject();
-            JsonArray methods = new JsonArray();
+            JObject data = new JObject();
+            JArray methods = new JArray();
 
             //Convert authentication methods to valid json
-            if (authMethods.emails.Any())
+            if (authMethods.emails.Count > 0)
             {
                 methods.Add("email");
-                JsonArray emails = new JsonArray();
+                JArray emails = new JArray();
                 authMethods.emails.ForEach(email => { emails.Add(email); });
                 data.Add("emails", emails);
             }
-            if (authMethods.phoneNumbers.Any())
+            if (authMethods.phoneNumbers.Count > 0)
             {
                 methods.Add("phone_number");
-                JsonArray phoneNumbers = new JsonArray();
+                JArray phoneNumbers = new JArray();
                 authMethods.phoneNumbers.ForEach(phoneNumber => { phoneNumbers.Add(phoneNumber); });
                 data.Add("phone_numbers", phoneNumbers);
             }
@@ -65,7 +66,7 @@ namespace CorbadoLibrary
             }
 
             data.Add("methods", methods);
-            JsonObject responseBody = new JsonObject()
+            JObject responseBody = new JObject()
         {
             {"data", data }
         };
@@ -84,14 +85,14 @@ namespace CorbadoLibrary
         public async Task<UserData> ReceiveSessionToken(string token)
         {
             //Call the Corbado backend to verify the session token
-            JsonObject reqBody = new JsonObject
+            JObject reqBody = new JObject
         {
             { "token", token },
 
             //ClientInfo? 
         };
 
-            var content = new StringContent(reqBody.ToJsonString(), Encoding.UTF8, "application/json");
+            var content = new StringContent(JsonHelper.serialize(reqBody), Encoding.UTF8, "application/json");
             var response = await client.PostAsync("https://api.corbado.com/v1/sessions/verify", content);
 
             var responseBodyRaw = await response.Content.ReadAsStringAsync();
@@ -102,10 +103,10 @@ namespace CorbadoLibrary
 
             //Extract user data
             var responseBody = JsonHelper.ParseJSONObject(responseBodyRaw);
-            var userDataRaw = JsonHelper.GetJsonNode(responseBody, "userData").GetValue<string>();
+            var userDataRaw = JsonHelper.GetJsonNode(responseBody, "userData").Value<string>();
             var userData = JsonHelper.ParseJSONObject(userDataRaw);
-            var username = JsonHelper.GetJsonNode(userData, "username").GetValue<string>();
-            var userFullName = JsonHelper.GetJsonNode(userData, "userFullName").GetValue<string>();
+            var username = JsonHelper.GetJsonNode(userData, "username").Value<string>();
+            var userFullName = JsonHelper.GetJsonNode(userData, "userFullName").Value<string>();
 
             return new UserData(username, userFullName);
         }
@@ -121,27 +122,30 @@ namespace CorbadoLibrary
         public async Task<string> CreateSessionToken(UserData userData)
         {
             //Call the Corbado backend to verify the session token
-            JsonObject reqBody = new JsonObject
+            JObject reqBody = new JObject
             {
             { "userData", userData.ToString() },
             
             //ClientInfo? 
         };
 
-            var content = new StringContent(reqBody.ToJsonString(), Encoding.UTF8, "application/json");
-            var response = await client.PostAsync("https://api.corbado.com/v1/sessions", content);
+            var contentNew = new StringContent(JsonHelper.serialize(reqBody), Encoding.UTF8, "application/json");
 
-            var responseBodyRaw = await response.Content.ReadAsStringAsync();
-            if (!response.IsSuccessStatusCode)
+            var responseNew = await client.PostAsync("https://api.corbado.com/v1/sessions", contentNew);
+
+            //------------------------------ bad
+
+            var responseBodyRaw = await responseNew.Content.ReadAsStringAsync();
+            if (!responseNew.IsSuccessStatusCode)
             {
                 throw new Exception("the corbado api call to /sessions failed. response body: '" + responseBodyRaw + "'");
             }
 
             //Extract user data
             var responseBody = JsonHelper.ParseJSONObject(responseBodyRaw);
-            var dataRaw = JsonHelper.GetJsonNode(responseBody, "userData").GetValue<string>();
+            var dataRaw = JsonHelper.GetJsonNode(responseBody, "data").Value<string>();
             var data = JsonHelper.ParseJSONObject(dataRaw);
-            var token = JsonHelper.GetJsonNode(data, "username").GetValue<string>();
+            var token = JsonHelper.GetJsonNode(data, "token").Value<string>();
 
             return token;
         }

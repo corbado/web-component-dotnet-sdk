@@ -3,7 +3,7 @@ using System.Text.Json;
 using System.Text.Json.Nodes;
 
 
-namespace CorbadoLibrary
+namespace CorbadoSdk
 {
     public class CorbadoSdk
     {
