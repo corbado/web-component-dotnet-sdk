@@ -13,37 +13,28 @@ namespace CorbadoWidgetBackend
         //Client info als parameter
 
         //Schreiben dass das die Daten von Corbado
-        public CorbadoInterface(string projectID, string apiSecret)
+        public CorbadoInterface(string corbadoServer, string projectID, string apiSecret)
         {
-            sdk = new CorbadoSdk(projectID, apiSecret);
+            sdk = new CorbadoSdk(corbadoServer, projectID, apiSecret);
         }
 
-        //Umbauen kein body nur username
-        public JObject GetLoginInfo(string body, Func<string, UserAuthMethods> getAuthMethodsForUser)
+        public JObject authMethods(string username, Func<string, UserAuthMethods> getAuthMethodsForUser)
         {
-            return sdk.GetLoginInfo(body, getAuthMethodsForUser);
+            return sdk.authMethods(username, getAuthMethodsForUser);
         }
-        public async Task<UserData> ReceiveSessionToken(string token)
+        public async Task<UserData> ReceiveSessionToken(string token, string remoteAddress, string userAgent)
         {
-            return await sdk.ReceiveSessionToken(token);
+            return await sdk.ReceiveSessionToken(token, remoteAddress, userAgent);
         }
-        public async Task<JObject> VerifyPassword(string body, Func<AuthData, PasswordVerifyResult> handlePasswordAuth)
+        public int VerifyPassword(string body, Func<AuthData, int> handlePasswordAuth)
         {
             var bodyParsed = JsonHelper.ParseJSONObject(body);
             var username = JsonHelper.GetJsonNode(bodyParsed, "username").Value<string>();
             var password = JsonHelper.GetJsonNode(bodyParsed, "password").Value<string>();
 
             var pwVerifyResult = sdk.VerifyPassword(new AuthData(username, password), handlePasswordAuth);
-            var responseBody = pwVerifyResult.GetBody();
 
-            if (pwVerifyResult is PasswordVerifySuccess)
-            {
-                string token = await sdk.CreateSessionToken(new UserData(username, null));
-  
-        //        responseBody.Add(new JProperty("token", token));
-            }
-
-            return responseBody;
+            return pwVerifyResult;
         }
     }
 }

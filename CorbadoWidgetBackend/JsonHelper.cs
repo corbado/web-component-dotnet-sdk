@@ -19,12 +19,22 @@ namespace CorbadoWidgetBackend
             return parsed;
         }
 
+        public static JObject GetJsonObject(JObject obj, string key)
+        {
+            var value = obj[key];
+            if (value == null)
+            {
+                throw new Exception("Unable to get object '" + key + "' from json object: '" + obj.ToString() + "'");
+            }
+            return (JObject)value;
+        }
+
         public static JToken GetJsonNode(JObject obj, string key)
         {
             var value = obj[key];
             if (value == null)
             {
-                throw new Exception("Unable to get '" + key + "' from json object: '" + obj.ToString() + "'");
+                throw new Exception("Unable to get token '" + key + "' from json object: '" + obj.ToString() + "'");
             }
             return value;
         }
