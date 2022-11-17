@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Net.Http;
 using System.Text;
@@ -62,7 +63,7 @@ namespace CorbadoWidgetBackend
             }
         };
 
-            var content = new StringContent(JsonHelper.serialize(reqBody), Encoding.UTF8, "application/json");
+            var content = new StringContent(JsonConvert.SerializeObject(reqBody), Encoding.UTF8, "application/json");
             var response = await client.PostAsync("https://" + corbadoServer + "/v1/sessions/verify", content);
 
             var responseBodyRaw = await response.Content.ReadAsStringAsync();

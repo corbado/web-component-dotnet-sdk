@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Serialization;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -37,16 +38,6 @@ namespace CorbadoWidgetBackend
                 throw new Exception("Unable to get token '" + key + "' from json object: '" + obj.ToString() + "'");
             }
             return value;
-        }
-
-        public static string serialize(JObject obj)
-        {
-            JsonSerializerSettings settings = new JsonSerializerSettings
-            {
-                ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
-            };
-
-            return JsonConvert.SerializeObject(obj, settings);
         }
     }
 }

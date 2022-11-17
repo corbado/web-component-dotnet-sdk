@@ -10,14 +10,24 @@ namespace CorbadoWidgetBackend
         //Doku
         public CorbadoSdk sdk;
 
-        //Client info als parameter
-
-        //Schreiben dass das die Daten von Corbado
+        /// <summary>
+        /// Creates an instance of the CorbadoInterface
+        /// </summary>
+        /// <param name="corbadoServer">e.g. api.corbado.com</param>
+        /// <param name="projectID">Your project id, taken from the Corbado dev panel</param>
+        /// <param name="apiSecret">Your api secret, taken from the Corbado dev panel</param>
         public CorbadoInterface(string corbadoServer, string projectID, string apiSecret)
         {
             sdk = new CorbadoSdk(corbadoServer, projectID, apiSecret);
         }
 
+        /// <summary>
+        /// handles the authMethodsList call which you backend receives from Corbado;
+        /// </summary>
+        /// <param name="username">The user</param>
+        /// <param name="getAuthMethodsForUser">A method which takes a username and returns either
+        /// an AuthMethodsSuccess or an AuthMethodsError object</param>
+        /// <returns></returns>
         public AuthMethodsResult AuthMethodsList(string username, Func<string, AuthMethodsResult> getAuthMethodsForUser)
         {
             return sdk.AuthMethodsList(username, getAuthMethodsForUser);

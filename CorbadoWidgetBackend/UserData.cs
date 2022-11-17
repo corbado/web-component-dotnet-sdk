@@ -35,7 +35,7 @@ namespace CorbadoWidgetBackend
             {
                 result.Add(new JProperty("userFullName", userFullName));
             }
-            return JsonHelper.serialize(result);
+            return JsonConvert.SerializeObject(result);
         }
     }
 }

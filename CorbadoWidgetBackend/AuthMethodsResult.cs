@@ -48,20 +48,19 @@ namespace CorbadoWidgetBackend
             JObject data = new JObject();
             JArray methods = new JArray();
 
-            //Convert authentication methods to valid json
             if (this.emails.Count > 0)
             {
                 methods.Add("email");
-                JArray emails = new JArray();
-                this.emails.ForEach(email => { emails.Add(email); });
-                data.Add("emails", emails);
+                JArray emailsArr = new JArray();
+                this.emails.ForEach(email => { emailsArr.Add(email); });
+                data.Add("emails", emailsArr);
             }
             if (this.phoneNumbers.Count > 0)
             {
                 methods.Add("phone_number");
-                JArray phoneNumbers = new JArray();
-                this.phoneNumbers.ForEach(phoneNumber => { phoneNumbers.Add(phoneNumber); });
-                data.Add("phone_numbers", phoneNumbers);
+                JArray phoneNumbersArr = new JArray();
+                this.phoneNumbers.ForEach(phoneNumber => { phoneNumbersArr.Add(phoneNumber); });
+                data.Add("phone_numbers", phoneNumbersArr);
             }
             if (this.hasPassword)
             {
@@ -69,7 +68,7 @@ namespace CorbadoWidgetBackend
             }
 
             data.Add("methods", methods);
-            JObject body = new JObject()
+            JObject body = new JObject
             {
                 {"data", data }
             };
