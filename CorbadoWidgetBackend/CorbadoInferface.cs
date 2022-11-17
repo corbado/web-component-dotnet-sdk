@@ -18,21 +18,21 @@ namespace CorbadoWidgetBackend
             sdk = new CorbadoSdk(corbadoServer, projectID, apiSecret);
         }
 
-        public JObject authMethods(string username, Func<string, UserAuthMethods> getAuthMethodsForUser)
+        public AuthMethodsResult AuthMethodsList(string username, Func<string, AuthMethodsResult> getAuthMethodsForUser)
         {
-            return sdk.authMethods(username, getAuthMethodsForUser);
+            return sdk.AuthMethodsList(username, getAuthMethodsForUser);
         }
-        public async Task<UserData> ReceiveSessionToken(string token, string remoteAddress, string userAgent)
+        public async Task<UserData> AuthSuccessRedirect(string token, string remoteAddress, string userAgent)
         {
-            return await sdk.ReceiveSessionToken(token, remoteAddress, userAgent);
+            return await sdk.AuthSuccessRedirect(token, remoteAddress, userAgent);
         }
-        public int VerifyPassword(string body, Func<AuthData, int> handlePasswordAuth)
+        public PasswordVerifyResult PasswordVerify(string body, Func<AuthData, PasswordVerifyResult> handlePasswordAuth)
         {
             var bodyParsed = JsonHelper.ParseJSONObject(body);
             var username = JsonHelper.GetJsonNode(bodyParsed, "username").Value<string>();
             var password = JsonHelper.GetJsonNode(bodyParsed, "password").Value<string>();
 
-            var pwVerifyResult = sdk.VerifyPassword(new AuthData(username, password), handlePasswordAuth);
+            var pwVerifyResult = sdk.PasswordVerify(new AuthData(username, password), handlePasswordAuth);
 
             return pwVerifyResult;
         }

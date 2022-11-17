@@ -35,41 +35,10 @@ namespace CorbadoWidgetBackend
         /// in the form of an UserAuthMethods object</param>
         /// <returns>The json response body for the getLoginInfo response</returns>
         /// <exception cref="JsonException">Is thrown if an error occurs during parsing of the request body</exception>
-        public JObject authMethods(string username, Func<string, UserAuthMethods> getAuthMethodsForUser)
+        public AuthMethodsResult AuthMethodsList(string username, Func<string, AuthMethodsResult> getAuthMethodsForUser)
         {
             //Get authentication methods for user
-            UserAuthMethods authMethods = getAuthMethodsForUser(username);
-
-            JObject data = new JObject();
-            JArray methods = new JArray();
-
-            //Convert authentication methods to valid json
-            if (authMethods.emails.Count > 0)
-            {
-                methods.Add("email");
-                JArray emails = new JArray();
-                authMethods.emails.ForEach(email => { emails.Add(email); });
-                data.Add("emails", emails);
-            }
-            if (authMethods.phoneNumbers.Count > 0)
-            {
-                methods.Add("phone_number");
-                JArray phoneNumbers = new JArray();
-                authMethods.phoneNumbers.ForEach(phoneNumber => { phoneNumbers.Add(phoneNumber); });
-                data.Add("phone_numbers", phoneNumbers);
-            }
-            if (authMethods.hasPassword)
-            {
-                methods.Add("password");
-            }
-
-            data.Add("methods", methods);
-            JObject responseBody = new JObject()
-        {
-            {"data", data }
-        };
-
-            return responseBody;
+            return getAuthMethodsForUser(username);
         }
 
         /// <summary>
@@ -80,7 +49,7 @@ namespace CorbadoWidgetBackend
         /// <param name="token">The session token which gets sent by the Corbado web component</param>
         /// <returns>username and userFullName of the session token owner</returns>
         /// <exception cref="Exception">Gets thrown if the api call to the Corbado backend is not successful</exception>
-        public async Task<UserData> ReceiveSessionToken(string token, string remoteAddress, string userAgent)
+        public async Task<UserData> AuthSuccessRedirect(string token, string remoteAddress, string userAgent)
         {
             //Call the Corbado backend to verify the session token
             JObject reqBody = new JObject
@@ -91,8 +60,6 @@ namespace CorbadoWidgetBackend
                     {"userAgent", userAgent}
                 } 
             }
-
-            //ClientInfo? 
         };
 
             var content = new StringContent(JsonHelper.serialize(reqBody), Encoding.UTF8, "application/json");
@@ -124,7 +91,7 @@ namespace CorbadoWidgetBackend
         /// <param name="handlePasswordAuth">A function which takes username and password of a user and returns
         /// either a PasswordVerifySuccess or a PasswordVerifyError object containing their individual data</param>
         /// <returns>The response body for the verifyPassword response</returns>
-        public int VerifyPassword(AuthData authData, Func<AuthData, int> handlePasswordAuth)
+        public PasswordVerifyResult PasswordVerify(AuthData authData, Func<AuthData, PasswordVerifyResult> handlePasswordAuth)
         {
             var result = handlePasswordAuth(authData);
             return result;
