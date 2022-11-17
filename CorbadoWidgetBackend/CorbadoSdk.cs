@@ -12,11 +12,6 @@ namespace CorbadoWidgetBackend
         private readonly HttpClient client;
         private string corbadoServer;
 
-        /// <summary>
-        /// Constructor of the CorbadoSdk
-        /// </summary>
-        /// <param name="projectID">Your projectID, taken from the Corbado developer panel</param>
-        /// <param name="apiSecret">Your apiSecret, taken from the Corbado developer panel</param>
         public CorbadoSdk(string corbadoServer, string projectID, string apiSecret)
         {
             this.corbadoServer = corbadoServer;
@@ -27,29 +22,12 @@ namespace CorbadoWidgetBackend
             client.DefaultRequestHeaders.Add("Authorization", auth);
         }
 
-        /// <summary>
-        /// Handles calls of the getLoginInfo endpoint.
-        /// Parses the request data and serializes the response data which is returned by getAuthMethodsForUser
-        /// </summary>
-        /// <param name="body">The request body of the getLoginInfo request</param>
-        /// <param name="getAuthMethodsForUser">A function which receives a username and returns the corresponding authentication methods
-        /// in the form of an UserAuthMethods object</param>
-        /// <returns>The json response body for the getLoginInfo response</returns>
-        /// <exception cref="JsonException">Is thrown if an error occurs during parsing of the request body</exception>
         public AuthMethodsResult AuthMethodsList(string username, Func<string, AuthMethodsResult> getAuthMethodsForUser)
         {
             //Get authentication methods for user
             return getAuthMethodsForUser(username);
         }
 
-        /// <summary>
-        /// Handles calls of the sessionToken endpoint.
-        /// Receives a session token from the corbado web component, verifies it using the corbado
-        /// api and extracts the details of the corresponding user
-        /// </summary>
-        /// <param name="token">The session token which gets sent by the Corbado web component</param>
-        /// <returns>username and userFullName of the session token owner</returns>
-        /// <exception cref="Exception">Gets thrown if the api call to the Corbado backend is not successful</exception>
         public async Task<UserData> AuthSuccessRedirect(string token, string remoteAddress, string userAgent)
         {
             //Call the Corbado backend to verify the session token
@@ -84,14 +62,6 @@ namespace CorbadoWidgetBackend
             return new UserData(username, userFullName);
         }
 
-        /// <summary>
-        /// Handles calls of the verifyPassword endpoint
-        /// Parses the request data and serializes the response data which is returned by handlePasswordAuth
-        /// </summary>
-        /// <param name="body">The request body of the verifyPassword request</param>
-        /// <param name="handlePasswordAuth">A function which takes username and password of a user and returns
-        /// either a PasswordVerifySuccess or a PasswordVerifyError object containing their individual data</param>
-        /// <returns>The response body for the verifyPassword response</returns>
         public PasswordVerifyResult PasswordVerify(AuthData authData, Func<AuthData, PasswordVerifyResult> handlePasswordAuth)
         {
             var result = handlePasswordAuth(authData);
